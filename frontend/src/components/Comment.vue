@@ -1,8 +1,8 @@
 <template>
         <div>
-        <div class="form-row commentForm">  
-          <input v-model="bodyComment" class="form-row__input" type="text" placeholder="Commentaire" maxlength="255" v-if="mode == 'addComment'">
-          <p class="card__showForm" v-if="mode == 'hideCommentInput'" @click="addComment()">Ajouter un commentaire !</p>
+        <div class="form-row" id="commentForm" role="form">  
+          <input id="bodyComment" v-model="bodyComment" aria-labelledby="commentForm" class="form-row__input" type="text" placeholder="Commentaire" maxlength="255" v-if="mode == 'addComment'">
+          <h5 class="card__showForm" v-if="mode == 'hideCommentInput'" @click="addComment()">Ajouter un commentaire !</h5>
         </div>
         <div class="form-row" v-if="mode == 'addComment'"> 
           <button @click="createComment()" class="button" :class="{'button--disabled' : !validatedField}">Ajouter un commentaire</button>
@@ -53,7 +53,7 @@ methods: {
         body: this.bodyComment,
         userUuid: userUuid,
         postUuid: this.msg
-      })
+      }, {headers:{'Authorization': user.token}})
       .then( (response) => {
         console.log(response.data);
         this.$store.dispatch("getCommentInfos");
@@ -70,7 +70,7 @@ methods: {
 
 
 <style scoped>
-.commentForm{
+#commentForm{
   justify-content: center;
 }
 </style>

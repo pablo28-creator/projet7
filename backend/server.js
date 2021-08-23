@@ -4,14 +4,13 @@
  const express = require("express");
  const bodyParser = require("body-parser");
  const path = require("path");
- const { sequelize, User, Post} = require("./models")
+ const { sequelize, User} = require("./models")
 /**
  * App Variables
  */
  const userRoutes = require("./routes/user");
  const postRoutes = require("./routes/post");
  const commentRoutes = require("./routes/comment");
- const auth = require("./middleware/auth");
  const app = express();
  const port = process.env.PORT || "8000";
  
@@ -31,15 +30,6 @@
 /**
  * Routes Definitions
  */
-app.get("/users",async ( req, res ) =>{
-   try{
-      const users = await User.findAll()
-      return res.json(users)
-      }catch(err) {
-         console.log(err)
-         return res.status(500).json({error: "Something went wrong"})
-      }
-})
 
 app.use("", userRoutes)
 app.use("", postRoutes);

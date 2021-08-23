@@ -145,16 +145,6 @@ const store = createStore({
             console.log(error);
             })
         },
-        getOnePost: ({commit}, uuid)  => {
-          instance.get("/posts/"+uuid)
-          .then(function (response) {
-            console.log(response.data)
-            commit
-          })
-          .catch(function (error) {
-          console.log(error);
-          })
-      },
         getCommentInfos: ({commit})  => {
           instance.get("/comments")
           .then(function (response) {

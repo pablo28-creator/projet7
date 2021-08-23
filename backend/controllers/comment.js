@@ -2,7 +2,7 @@ const {Post, User, Comment} = require("../models");
 const fs = require('fs');
 
 exports.createComment = async (req, res) => {
-    const {userUuid, body, postUuid } = req.bod
+    const {userUuid, body, postUuid } = req.body
     
    try{
       const user = await User.findOne({ where: {uuid: userUuid}})

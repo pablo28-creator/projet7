@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div class="divLogo">
+        <div class="divLogo" role="banner">
             <img class="logo" src="../assets/icon-left-font-monochrome-white.png" alt="logo Groupomania">
         </div>
         <div>
             <img id="banniere" src="../assets/banniere.jpg" alt="bannière de la page d'accueil">
         </div>
-        <div class="title">
+        <div class="title" role="main">
             <h1>Réseau social de l'entreprise Groupamania</h1>
             <p>La direction avait promis des mesures d'amélioration de la communication entre collègues.
                 Voici le tout premier réseau social interne de Groupomania. 

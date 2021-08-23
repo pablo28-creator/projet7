@@ -1,37 +1,40 @@
 <template>
     <div>
       <Header/>
-      <div class="card hideForm" v-if="mode == 'hidePostForm'">
-         <p class="card__showForm" @click="addPost()">Ajouter un post !</p>
+      <div>
+        <h1 role="banner">Mur de Groupomania</h1>
       </div>
-      <div class="card" v-if="mode =='addPost'">
-        <div class="form-row">
-          <input v-model="title" id="title" class="form-row__input" type="text" placeholder="Titre" maxlength="255">
+      <div class="card hideForm" v-if="mode == 'hidePostForm'">
+         <h2 class="card__showForm" @click="addPost()">Ajouter un post !</h2>
+      </div>
+      <div class="card" v-if="mode =='addPost'" role="form">
+        <div class="form-row" id="titre">
+          <input v-model="title" id="title" aria-labelledby="titre" class="form-row__input" type="text" placeholder="Titre" maxlength="255">
         </div>
-        <div class="form-row">
-          <input v-model="body" id="body" class="form-row__input" type="text" placeholder="Message" maxlength="255">
+        <div class="form-row" id="texte">
+          <input v-model="body" id="body" aria-labelledby="texte" class="form-row__input" type="text" placeholder="Message" maxlength="255">
         </div>
-        <div class="form-row">
-          <input id="image" class="form-row__input" type="file" placeholder="Image" name="image">
+        <div class="form-row" id="photo">
+          <input id="image" class="form-row__input" aria-labelledby="photo" type="file" placeholder="Image" name="image">
         </div>
         <div class="form-row"> 
           <button @click="createPost()" class="button" :class="{'button--disabled' : !validatedFields}">Ajouter un post</button>
         </div>
       </div>
-        <div class=" card post"  v-for="post in posts" v-bind:key="post.uuid">
+        <div class=" card post"  v-for="post in posts" v-bind:key="post.uuid" role="main">
           <div class="deleteDiv">
           <div class="pseudo" v-if="post.user"><span class="pseudoUser"> {{post.user.name }} </span> a posté le {{ post.updatedAt }} : </div>
-          <i class="fas fa-times fa-2x deleteIcon" @click="deletePost(post.uuid, post.user.uuid)"></i>
+          <i class="fas fa-times fa-2x deleteIcon" @click="deletePost(post.uuid, post.user.uuid, post.user.isAdmin)"></i>
           </div>
           <div class="bordure">
             <div class="imageContent">
             <div class="image">
-                <img :src="post.image"/>
+                <img :src="post.image" alt="Image du post"/>
                 </div>
                 </div> 
                 <div class="desciption">
                   <div class="likeDiv ">
-                  <h2 class="title"> {{ post.title }}</h2>
+                  <h3 class="title"> {{ post.title }}</h3>
                   <div class="like">
                     <i @click="modifyLike(post.uuid)" class="far fa-thumbs-up fa-2x iconLike"></i>
                     <p class="likeNumber likePadding">{{post.likes}}</p>
@@ -45,12 +48,12 @@
             </div>
           </div>
             <div class="comments">
-              <h3> Commentaire :</h3>
+              <h4> Commentaire :</h4>
               <Comment :msg="post.uuid"/>
                 <div class=" comment" v-for="comment in comments"  v-bind:key="comment.uuid">
                   <div class="desciption" v-if="comment.postUuid == post.uuid"> 
                   <p class="infoComment" v-if="comment.user">
-                    <i class="fas fa-times deleteIcon deleteComment" @click="deleteComment(comment.uuid, comment.user.uuid)" ></i>||
+                    <i class="fas fa-times deleteIcon deleteComment" @click="deleteComment(comment.uuid, comment.user.uuid, comment.user.isAdmin)" ></i>||
                     <span class="pseudoUser"> {{ comment.user.name}}</span> : {{ comment.body }} || <span class="date"> {{ comment.updatedAt}}</span>
                   </p>
                   <div class="likeDiv">
@@ -76,6 +79,7 @@ import { mapState } from "vuex"
 import Header from "../components/Header.vue"
 import Comment from "../components/Comment.vue"
 import axios from "axios"
+import jwt from "jsonwebtoken"
 const instance = axios.create({
   baseURL: 'http://localhost:8000'
 });
@@ -90,9 +94,6 @@ export default {
       post:'',
       title: '',
       body:"",
-      file: '',
-      userUuid: "",
-      usersLiked:"",
     }
   },
     mounted: function() {
@@ -133,8 +134,7 @@ export default {
         formData.append("image", imagefile.files[0]);
         try{
         instance.post("/posts", formData,{headers:{'Authorization': user.token}})
-        .then( (response) => {
-         console.log(response)
+        .then( () => {
          this.$store.dispatch("getPostInfos");
          const file = document.getElementById("image");
          this.title = " ";
@@ -147,11 +147,14 @@ export default {
         }
     },
     
-    deletePost: function(uuid, userUuid ) {
+    deletePost: function(uuid, userUuid) {
       let user = localStorage.getItem('user');
-        user = JSON.parse(user);
-        let userId = user.userUuid   
-      if(userUuid == userId){
+        user = JSON.parse(user);  
+        let token = user.token
+        const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+        const tokenUuid = decodedToken.userUuid;
+        const isAdmin = decodedToken.isAdmin
+      if(userUuid == tokenUuid || isAdmin == 1){
       try{
         instance.delete("posts/"+uuid, {headers:{'Authorization': user.token}})
         .then(() => {
@@ -169,7 +172,7 @@ export default {
         user = JSON.parse(user);
         let userUuid = user.userUuid
         try{ 
-        instance.post("posts/"+uuid ,{userUuid, like:1})
+        instance.post("posts/"+uuid ,{userUuid, like:1}, {headers:{'Authorization': user.token}})
         .then((response)  => {
         console.log(response);
          this.$store.dispatch("getPostInfos");
@@ -182,11 +185,10 @@ export default {
         let user = localStorage.getItem('user');
         user = JSON.parse(user);
         let userUuid = user.userUuid 
-        instance.post("posts/"+uuid ,{userUuid, like:-1})
+        instance.post("posts/"+uuid ,{userUuid, like:-1}, {headers:{'Authorization': user.token}})
         .then((response)  => {
           console.log(response);
           this.$store.dispatch("getPostInfos");
-
         })
         .catch (error =>
           console.log(error)
@@ -194,11 +196,15 @@ export default {
     },
     deleteComment: function(uuid, userUuid) {
       let user = localStorage.getItem('user');
-        user = JSON.parse(user);
-        let userId = user.userUuid   
-      if(userUuid == userId){
+        user = JSON.parse(user);  
+        let token = user.token
+        const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+        const tokenUuid = decodedToken.userUuid;
+        const isAdmin = decodedToken.isAdmin
+        console.log(isAdmin)   
+      if(userUuid == tokenUuid || isAdmin == 1){
       try{
-        instance.delete("comments/"+uuid)
+        instance.delete("comments/"+uuid, {headers:{'Authorization': user.token}})
         .then(() => {
           console.log("Commentaire supprimé !");
           this.$store.dispatch("getCommentInfos");
@@ -214,7 +220,7 @@ export default {
         user = JSON.parse(user);
         let userUuid = user.userUuid
         try{ 
-        instance.post("comments/"+uuid ,{userUuid, like:1})
+        instance.post("comments/"+uuid ,{userUuid, like:1 }, {headers:{'Authorization': user.token}})
         .then((response)  => {
         console.log(response);
          this.$store.dispatch("getCommentInfos");
@@ -227,11 +233,10 @@ export default {
         let user = localStorage.getItem('user');
         user = JSON.parse(user);
         let userUuid = user.userUuid 
-        instance.post("comments/"+uuid ,{userUuid, like:-1})
+        instance.post("comments/"+uuid ,{userUuid, like:-1}, {headers:{'Authorization': user.token}})
         .then((response)  => {
           console.log(response);
           this.$store.dispatch("getCommentInfos");
-
         })
         .catch (error =>
           console.log(error)
@@ -243,6 +248,10 @@ export default {
 
 <style scoped>
 
+h1{
+  color: white;
+  text-align: center;
+}
 .card{
   margin: 1em;
   width: 1000px;
@@ -333,7 +342,7 @@ export default {
 .pseudoUser{
   font-weight: bold;
 }
-h3 {
+h4 {
   color: white;
   font-size: 26px;
 }

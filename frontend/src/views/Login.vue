@@ -1,17 +1,17 @@
 <template>
-  <div class="card">
+  <div class="card" role="main">
     <h1 class="card__title" v-if="mode == 'login'">Connexion</h1>
     <h1 class="card__title" v-else>Inscription</h1>
     <p class="card__subtitle" v-if="mode == 'login'">Tu n'as pas encore de compte ? <span class="card__action" @click="switchToCreateAccount()">Créer un compte</span></p>
     <p class="card__subtitle" v-else>Tu as déjà un compte ? <span class="card__action" @click="switchToLogin()">Se connecter</span></p>
-      <div class="form-row" v-if="mode == 'create'">
-      <input v-model="name" class="form-row__input" type="text" placeholder="Pseudo"/>
+      <div class="form-row" id="name" v-if="mode == 'create'">
+      <input v-model="name" aria-labelledby="name" class="form-row__input" type="text" placeholder="Pseudo"/>
     </div>
-    <div class="form-row">
-      <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail"/>
+    <div class="form-row" id="email">
+      <input v-model="email" aria-labelledby="email" class="form-row__input" type="text" placeholder="Adresse mail"/>
     </div>
-    <div class="form-row">
-      <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe"/>
+    <div class="form-row" id="password">
+      <input v-model="password" aria-labelledby="password" class="form-row__input" type="password" placeholder="Mot de passe"/>
     </div>
     <div class="form-row" v-if="mode == 'login' && status == 'error_login'">
       Adresse mail et/ou mot de passe invalide.
