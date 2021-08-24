@@ -90,7 +90,7 @@ export default {
     components: {Header, Comment},
     data: function() {
     return {
-      mode:"hidePostForm",
+      mode:"hidePostForm",                                            // mode pour cacher le formulaire de post
       post:'',
       title: '',
       body:"",

@@ -4,8 +4,6 @@ const fs = require('fs');
 
 exports.createPost = async (req, res) => {
     const {userUuid, body, title} = req.body
-    console.log(req.file)
-    console.log(req.body)
    try{
       const user = await User.findOne({ where: {uuid: userUuid}})
 
@@ -18,7 +16,6 @@ exports.createPost = async (req, res) => {
             dislikes: 0,
             usersLiked: [],
             usersDisliked: [],
-            updatedAt: new Date("DD-MM-YYYYTHH"),
          })
          return res.json(post)  
    }catch(err){
@@ -31,19 +28,10 @@ exports.getAllPost = async (req, res) => {
          order: [['createdAt', 'DESC']],
          include: [{
          model: User, as: "user",
-         attributes: { exclude: ['password',"email","createdAt","updatedAt"] }
+         attributes: { exclude: ['password',"email","createdAt","updatedAt"] }                        // On enlève les données sensibles de la réponse ( password, email) 
   }]    
        });
       return res.json(posts)
-   }catch(err){
-      console.log(err)
-   return res.status(500).json(err) 
-}}
-exports.getOnePost = async (req, res) => {
-   const uuid = req.params.uuid
-   try{
-      const post = await Post.findOne({where: { uuid }})
-      return res.json(post)
    }catch(err){
       console.log(err)
    return res.status(500).json(err) 
@@ -66,19 +54,18 @@ exports.postDelete =   async ( req, res ) =>{
    const uuid = req.params.uuid
    
    if(like == 1){  
-      
       Post.findOne({where: { uuid }})
        .then(post => {
-         const foundLike = post.usersLiked.find(element => element == userUuid);
+         const foundLike = post.usersLiked.find(element => element == userUuid);                                  // On cherche l'userUuid dans les tableaux userliked/disliked
          const foundDislike = post.usersDisliked.find(element => element == userUuid);
            if(!foundLike && !foundDislike){
-            post.usersLiked = [post.usersLiked, userUuid ]
+            post.usersLiked = [post.usersLiked, userUuid ]                                                        //On ajoute l'userUuid au tableau userliked
             post.likes = post.likes + 1
             console.log(post.usersLiked)
             post.save()
            }
            else if(foundLike){
-            post.usersLiked = post.usersLiked.filter((user) => user !== userUuid)
+            post.usersLiked = post.usersLiked.filter((user) => user !== userUuid)                                 //On enlève l'userUuid du tableau userliked
             post.likes = post.likes - 1
             post.save()
           }

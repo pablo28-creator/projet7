@@ -13,7 +13,7 @@ if (!user) {
 } else {
   try {
     user = JSON.parse(user);
-    instance.defaults.headers.common['Authorization'] = user.token;
+    instance.defaults.headers.common['Authorization'] = user.token;                         // authorization ajouté dans les requêtes
   } catch (ex) {
     user = {defaultUser};
   }
@@ -39,7 +39,7 @@ const store = createStore({
           userUuid:"",
         },
       },
-    getters: {
+    getters: {                                                                  // getter d'authentification pour les navigation guards
       isAuthenticated: (state) => {
         return state.user.token
       }
@@ -50,7 +50,7 @@ const store = createStore({
         },
         logUser: function (state, user) {
             instance.defaults.headers.common['Authorization'] = user.token;
-            localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('user', JSON.stringify(user));                  // on ajoute le token et l'user id au local storage 
             state.user = user;
          
         },

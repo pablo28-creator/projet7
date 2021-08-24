@@ -20,11 +20,11 @@ const instance = axios.create({
 export default {
     name: "Comment",
     props: {
-      msg: String
+      msg: String                                                       // prop pour récupérer l'id du post
     },
     data: function() {
     return {
-      mode: "hideCommentInput",
+      mode: "hideCommentInput",                                         // mode pour cacher le formulaire des commentaires    
       bodyComment:"",
     }
 },

@@ -5,15 +5,15 @@
     <h1 class="card__title" v-if="mode == 'profil'">Profil</h1>
     <h1 class="card__title" v-if="mode == 'modifyProfil'">Changer le profil</h1>
     <p class="card__subtitle" v-if="mode == 'profil'"> Pseudo : {{user.name}}</p>
-    <div class="form-row" v-if="mode == 'modifyProfil'">
-      <input v-model="name" class="form-row__input" v-if="mode == 'modifyProfil'" type="text" placeholder="Pseudo"/>
+    <div class="form-row" id="name" v-if="mode == 'modifyProfil'">
+      <input v-model="name" aria-labelledby="name" class="form-row__input" v-if="mode == 'modifyProfil'" type="text" placeholder="Pseudo" maxlength="30"/>
     </div> 
     <p class="card__subtitle" v-if="mode == 'profil'"> Email : {{user.email}}</p>
-    <div class="form-row" v-if="mode == 'modifyProfil'">
-      <input v-model="email" class="form-row__input" type="text" placeholder="Adresse mail"/>
+    <div class="form-row" id="email" v-if="mode == 'modifyProfil'">
+      <input v-model="email" aria-labelledby="email" class="form-row__input" type="text" placeholder="Adresse mail" maxlength="70"/>
     </div>
-    <div class="form-row" v-if="mode == 'modifyProfil'">
-      <input v-model="password" class="form-row__input" type="password" placeholder="Mot de passe"/>
+    <div class="form-row" id="password" v-if="mode == 'modifyProfil'">
+      <input v-model="password" aria-labelledby="password" class="form-row__input" type="password" placeholder="Mot de passe" maxlength="40"/>
     </div>
     <div class="form-row">
       <button @click="logout()" class="button" v-if="mode == 'profil'">
@@ -45,7 +45,7 @@ export default {
   components: {Header},
   data: function() {
     return {
-      mode: 'profil',
+      mode: 'profil',                                                         // mode qui affiche les infos de profil
       name: '',
       email: '',
       password: '',

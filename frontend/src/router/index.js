@@ -5,7 +5,7 @@ import Wall from "@/views/Wall.vue";
 import Profil from "@/views/Profil.vue"
 import store from "@/store/index.js"
 
-const authGuard = (to, from, next) => {
+const authGuard = (to, from, next) => {                       // navigation guards 
   if (store.getters.isAuthenticated) {
     next();
   } else {

@@ -12,12 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate({ Post, User }) {
       // define association here
       this.belongsTo(Post, {
-        foreignKey: "postId", as: "post"})
+        foreignKey: "postId", as: "post"})                                          // Commentaire associé à l'utilisateur et au post
       this.belongsTo(User, {
         foreignKey: "userId", as: "user"})
       } 
     toJSON(){
-      return{ ...this.get(), id: undefined, postId: undefined, userId: undefined}
+      return{ ...this.get(), id: undefined, postId: undefined, userId: undefined}   
   }};
   Comment.init({
     uuid: {
@@ -51,10 +51,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       get() {
-          return this.getDataValue('usersLiked').split(',')
+          return this.getDataValue('usersLiked').split(',')                     // On retourne sous forme string
       },
       set(val) {
-         this.setDataValue('usersLiked',val.join(','));
+         this.setDataValue('usersLiked',val.join(','));                         // On transforme la string en tableau
       }
     },
     usersDisliked: {

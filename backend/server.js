@@ -2,7 +2,9 @@
  * Required External Modules
  */
  const express = require("express");
+ const helmet = require("helmet");
  const bodyParser = require("body-parser");
+ const rateLimit = require("express-rate-limit");
  const path = require("path");
  const { sequelize, User} = require("./models")
 /**
@@ -24,7 +26,13 @@
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
     next();  
   });
- app.use(express.json())
+  const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    max: 500
+  });
+ app.use(limiter);
+ app.use(express.json());
+ app.use(helmet());
  app.use(bodyParser.json());
  app.use("/images", express.static(path.join(__dirname, "images")));
 /**

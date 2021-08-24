@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate({Post, Comment}) {
       // define association here
-      this.hasMany(Post, {
+      this.hasMany(Post, {                                        // Utilisateur relié à ses posts et commentaires, supression en cascade
         foreignKey: "userId", as: "post",
         onDelete: "cascade",
         hooks: true,
@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
         notEmpty: { msg: "Password must not be empty"},
       }
     },
-    isAdmin: {
+    isAdmin: {                                                          // boléen poour savoir si le compte est admin ou non
       type: DataTypes.TINYINT,
       allowNull: false,
     },

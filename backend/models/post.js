@@ -13,12 +13,12 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       //userId
       this.hasMany(Comment, {
-        foreignKey: "postId", as: "comment",
+        foreignKey: "postId", as: "comment",                                  // Post relié à ses commentaire, suppression en cascade
         onDelete: "cascade",
         hooks: true,
         onUpdate: "cascade"
       })
-      this.belongsTo(User, {
+      this.belongsTo(User, {                                                  // Post associé à un utilisateur
         foreignKey: "userId", as: "user"})
     }
     toJSON(){

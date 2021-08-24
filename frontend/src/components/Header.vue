@@ -15,7 +15,7 @@ export default {
     name: "Header",
     
     methods: {
-        reponsiveHeader: function() {
+        reponsiveHeader: function() {                                     // Fonction pour ajout de la classe reponsive au header
             var x = document.getElementById("myHeader");
             if (x.className === "header") {
                 x.className += " responsive";
@@ -40,8 +40,7 @@ export default {
   margin-left: 1em;
 }
 img{
-    width: 250px;
-    
+    width: 250px; 
 }
 .link{
     width: 100px;
@@ -55,16 +54,15 @@ img{
 .link:hover{
     color: lightcoral;
     text-decoration: underline;
-}
-@media screen and (max-width: 520px) {
+} 
+/*  media querie pour rendre le hearder response */                                                                          
+@media screen and (max-width: 520px) {                              
   .header a:not(:first-child) {display: none;}
   .header a.icon {
     float: right;
     display: block;
   }
 }
-
-/* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
 @media screen and (max-width: 520px) {
   .header.responsive {position: relative;}
   .header.responsive a.icon {

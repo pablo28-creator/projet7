@@ -4,7 +4,7 @@ const {User} = require("../models");
 
 
 exports.signup = (req, res) => {
-    const verify = req.body.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/)
+    const verify = req.body.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/)               // Vérification mot de passe minimun 8 charactère, minuscule, majuscule, chiffre
     if(verify){
       bcrypt.hash(req.body.password, 10)
         .then(hash => {
@@ -12,13 +12,12 @@ exports.signup = (req, res) => {
             name: req.body.name,
             email: req.body.email ,
             password: hash,
-            isAdmin: false
+            isAdmin: false                                                                                  // Valeur isAdmin fasle par défault
           });
         user.save()
             .then(() => res.status(201).json({user, message: "Utilisateur créé !" }))
             .catch(error => res.status(400).json({ error }));
         })
-        
         .catch(error => res.status(500).json({ error }));
     }else{
       return res.status(400).json({message: "Password not valid", success: false})

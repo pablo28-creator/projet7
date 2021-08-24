@@ -1,5 +1,4 @@
 const {Post, User, Comment} = require("../models");
-const fs = require('fs');
 
 exports.createComment = async (req, res) => {
     const {userUuid, body, postUuid } = req.body
@@ -28,19 +27,10 @@ exports.getAllComment = async (req, res) => {
          order: [['createdAt', 'DESC']],
          include: [{
          model: User, as: "user",
-         attributes: { exclude: ['password',"email","createdAt","updatedAt"] }
+         attributes: { exclude: ['password',"email","createdAt","updatedAt"] }                           // On enlève les données sensibles de la réponse ( password, email)   
   }]    
       })
       return res.json(comments)
-   }catch(err){
-      console.log(err)
-   return res.status(500).json(err) 
-}}
-exports.getOneComment= async (req, res) => {
-   const uuid = req.params.uuid
-   try{
-      const comment = await Comment.findOne({where: { uuid }})
-      return res.json(comment)
    }catch(err){
       console.log(err)
    return res.status(500).json(err) 
@@ -56,20 +46,6 @@ exports.commentDelete =   async ( req, res ) =>{
          return res.status(500).json({error: "Something went wrong"})
       }
 };
-exports.commentUpdate = async ( req, res ) =>{
-   const uuid = req.params.uuid
-   try {
-      const comment = await Comment.findOne({where: { uuid }})
-        
-      comment.body = req.body.body
-      comment.uuid = uuid
-      await comment.save()
-      return res.json(comment)
-      }catch(err) {
-         console.log(err)
-         return res.status(500).json({error: "Something went wrong"})
-      }
- };
  exports.modifyLike = async (req, res, next) => {
    const {userUuid, like} = req.body
    const uuid = req.params.uuid
@@ -77,21 +53,15 @@ exports.commentUpdate = async ( req, res ) =>{
    if(like == 1){  
       Comment.findOne({where: { uuid }})
        .then(comment => {
-         console.log(comment.usersLiked)
-         console.log(comment.usersDisliked)
-         const foundLike = comment.usersLiked.find(element => element == userUuid);
+         const foundLike = comment.usersLiked.find(element => element == userUuid);                   // On cherche l'userUuid dans les tableaux userliked/disliked
          const foundDislike = comment.usersDisliked.find(element => element == userUuid);
-         console.log(foundLike)
-          console.log(like) 
-         console.log(foundDislike)
            if(!foundLike && !foundDislike){
-            comment.usersLiked = [comment.usersLiked, userUuid ]
+            comment.usersLiked = [comment.usersLiked, userUuid ]                                      //On ajoute l'userUuid au tableau userliked
             comment.likes = comment.likes + 1
-            console.log(comment.usersLiked)
             comment.save()
            }
            else if(foundLike){
-            comment.usersLiked = comment.usersLiked.filter((user) => user !== userUuid)
+            comment.usersLiked = comment.usersLiked.filter((user) => user !== userUuid)               //On enlève l'userUuid du tableau userliked
             comment.likes = comment.likes - 1
             comment.save()
           }
