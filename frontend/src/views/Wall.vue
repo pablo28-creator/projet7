@@ -105,10 +105,10 @@ export default {
     },
     computed: {
       formattedDate : function() {
-      return moment(this.post.updatedAt).format('DD-MM-YYYY');
+      return moment(this.post.updatedAt).format('DD/MM/YYYY');
     },
     formattedDateComment : function() {
-      return moment(this.comment.updatedAt).format('DD-MM-YYYY');
+      return moment(this.comment.updatedAt).format('DD/MM/YYYY');
     },
       validatedFields: function() {
         if (this.title!= "" && this.body != "") {
