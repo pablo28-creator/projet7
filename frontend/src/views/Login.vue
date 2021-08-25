@@ -50,7 +50,7 @@ export default {
   },
   computed: {
     validatedFields: function() {                                               
-      if (this.mode == 'create') {                                                // foncction qui affiche le bouton login/create désactiver si les inputs ne sont pas remplit
+      if (this.mode == 'create') {                                                // fonction qui affiche le bouton login/create désactivé si les inputs ne sont pas remplit
         if (this.name != "" && this.email != "" && this.password != "") {
           return true;
         } else {

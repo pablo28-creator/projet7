@@ -23,8 +23,8 @@
       </div>
         <div class=" card post"  v-for="post in posts" v-bind:key="post.uuid" role="main">
           <div class="deleteDiv">
-          <div class="pseudo" v-if="post.user"><span class="pseudoUser"> {{post.user.name }} </span> a posté le {{ post.updatedAt }} : </div>
-          <i class="fas fa-times fa-2x deleteIcon" @click="deletePost(post.uuid, post.user.uuid, post.user.isAdmin)"></i>
+          <div class="pseudo" v-if="post.user"><span class="pseudoUser"> {{post.user.name }} </span> a posté le {{ formattedDate }} : </div>
+          <i class="fas fa-times fa-2x deleteIcon" @click="deletePost(post.uuid, post.user.uuid)"></i>
           </div>
           <div class="bordure">
             <div class="imageContent">
@@ -53,8 +53,8 @@
                 <div class=" comment" v-for="comment in comments"  v-bind:key="comment.uuid">
                   <div class="desciption" v-if="comment.postUuid == post.uuid"> 
                   <p class="infoComment" v-if="comment.user">
-                    <i class="fas fa-times deleteIcon deleteComment" @click="deleteComment(comment.uuid, comment.user.uuid, comment.user.isAdmin)" ></i>||
-                    <span class="pseudoUser"> {{ comment.user.name}}</span> : {{ comment.body }} || <span class="date"> {{ comment.updatedAt}}</span>
+                    <i class="fas fa-times deleteIcon deleteComment" @click="deleteComment(comment.uuid, comment.user.uuid)" ></i>||
+                    <span class="pseudoUser"> {{ comment.user.name}}</span> : {{ comment.body }} || <span class="date"> {{ formattedDateComment}}</span>
                   </p>
                   <div class="likeDiv">
                     <div class="title"></div>
@@ -80,6 +80,7 @@ import Header from "../components/Header.vue"
 import Comment from "../components/Comment.vue"
 import axios from "axios"
 import jwt from "jsonwebtoken"
+import moment from 'moment';
 const instance = axios.create({
   baseURL: 'http://localhost:8000'
 });
@@ -92,6 +93,7 @@ export default {
     return {
       mode:"hidePostForm",                                            // mode pour cacher le formulaire de post
       post:'',
+      comment:'',
       title: '',
       body:"",
     }
@@ -99,8 +101,15 @@ export default {
     mounted: function() {
       this.$store.dispatch("getPostInfos");
       this.$store.dispatch("getCommentInfos");
+      
     },
     computed: {
+      formattedDate : function() {
+      return moment(this.post.updatedAt).format('DD-MM-YYYY');
+    },
+    formattedDateComment : function() {
+      return moment(this.comment.updatedAt).format('DD-MM-YYYY');
+    },
       validatedFields: function() {
         if (this.title!= "" && this.body != "") {
           return true;
@@ -200,8 +209,7 @@ export default {
         let token = user.token
         const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
         const tokenUuid = decodedToken.userUuid;
-        const isAdmin = decodedToken.isAdmin
-        console.log(isAdmin)   
+        const isAdmin = decodedToken.isAdmin 
       if(userUuid == tokenUuid || isAdmin == 1){
       try{
         instance.delete("comments/"+uuid, {headers:{'Authorization': user.token}})

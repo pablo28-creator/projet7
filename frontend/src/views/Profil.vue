@@ -52,7 +52,7 @@ export default {
     }
   },
   mounted: function () {
-    this.$store.dispatch('getUserInfos');
+    this.$store.dispatch('getUserInfos'); 
   },
   computed: {
     validatedFields: function() {

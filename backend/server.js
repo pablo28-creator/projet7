@@ -6,7 +6,7 @@
  const bodyParser = require("body-parser");
  const rateLimit = require("express-rate-limit");
  const path = require("path");
- const { sequelize, User} = require("./models")
+ const { sequelize} = require("./models")
 /**
  * App Variables
  */
@@ -28,7 +28,7 @@
   });
   const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minutes
-    max: 500
+    max: 300
   });
  app.use(limiter);
  app.use(express.json());
